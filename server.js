@@ -1,0 +1,75 @@
+const express = require('express');
+const cors = require('cors');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+require('dotenv').config();
+const path = require('path')
+const bonRoutes = require('./routes/bon.routes');
+const { errorHandler } = require('./middleware/errorHandler');
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Security middleware
+app.use(helmet());
+
+// Rate limiting
+// const limiter = rateLimit({
+//     windowMs: 1 * 60 * 1000, // 1 minute
+//     max: parseInt(process.env.MAX_REQUESTS_PER_MINUTE) || 30,
+//     message: 'Trop de requêtes, veuillez réessayer plus tard.'
+// });
+
+// app.use('/api/', limiter);
+
+// CORS
+app.use(cors({
+    origin: process.env.NODE_ENV === 'production' 
+        ? ['https://yourdomain.com'] 
+        : '*',
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type']
+}));
+
+// Body parser
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Health check
+app.get('/health', (req, res) => {
+    res.json({ 
+        status: 'OK', 
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime()
+    });
+});
+
+// Routes
+app.use('/api/bon', bonRoutes);
+app.use('/public', express.static(path.join(__dirname, 'public')));
+
+// 404 handler
+app.use('*', (req, res) => {
+    res.status(404).json({ 
+        error: 'Route non trouvée',
+        path: req.originalUrl 
+    });
+});
+
+// Error handler
+app.use(errorHandler);
+
+// Start server
+app.listen(PORT, () => {
+    console.log(`🚀 Server running on http://localhost:${PORT}`);
+    console.log(`📝 Environment: ${process.env.NODE_ENV}`);
+    console.log(`📄 API docs: http://localhost:${PORT}/api/bon/docs`);
+});
+
+// Graceful shutdown
+process.on('SIGTERM', () => {
+    console.log('SIGTERM signal received: closing HTTP server');
+    server.close(() => {
+        console.log('HTTP server closed');
+    });
+});
