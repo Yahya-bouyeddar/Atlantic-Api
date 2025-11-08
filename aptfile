@@ -1,6 +1,8 @@
-```
+
 chromium
 chromium-chromedriver
+chromium-codecs-ffmpeg
+chromium-browser
 fonts-liberation
 libappindicator3-1
 libasound2
@@ -17,4 +19,3 @@ libxdamage1
 libxrandr2
 libgbm1
 xdg-utils
-```

@@ -8,25 +8,65 @@ const templateService = require('./template.service');
 async function getBrowserInstance() {
     const isProduction = process.env.NODE_ENV === 'production';
     
+    console.log('🔍 Environment check:', {
+        NODE_ENV: process.env.NODE_ENV,
+        isProduction: isProduction
+    });
+    
     if (isProduction) {
         // Configuration pour Render (production)
-        const chromium = require('@sparticuz/chromium');
+        console.log('🚀 Attempting to use Chromium for Render environment');
         
-        return await puppeteerCore.launch({
-            args: [
-                ...chromium.args,
-                '--no-sandbox',
-                '--disable-setuid-sandbox',
-                '--disable-dev-shm-usage',
-                '--disable-gpu'
-            ],
-            defaultViewport: chromium.defaultViewport,
-            executablePath: await chromium.executablePath(),
-            headless: chromium.headless,
-        });
+        try {
+            const chromium = require('@sparticuz/chromium');
+            
+            const browser = await puppeteerCore.launch({
+                args: [
+                    ...chromium.args,
+                    '--no-sandbox',
+                    '--disable-setuid-sandbox',
+                    '--disable-dev-shm-usage',
+                    '--disable-gpu'
+                ],
+                defaultViewport: chromium.defaultViewport,
+                executablePath: await chromium.executablePath(),
+                headless: chromium.headless,
+            });
+            
+            console.log('✅ Successfully launched Chromium from @sparticuz/chromium');
+            return browser;
+            
+        } catch (chromiumError) {
+            // Fallback sur Chromium système installé via aptfile
+            console.error('⚠️ Error with @sparticuz/chromium:', chromiumError.message);
+            console.log('🔄 Trying fallback to system Chromium...');
+            
+            try {
+                const browser = await puppeteerCore.launch({
+                    executablePath: '/usr/bin/chromium-browser',
+                    args: [
+                        '--no-sandbox',
+                        '--disable-setuid-sandbox',
+                        '--disable-dev-shm-usage',
+                        '--disable-gpu',
+                        '--disable-extensions'
+                    ],
+                    headless: 'new'
+                });
+                
+                console.log('✅ Successfully launched system Chromium');
+                return browser;
+                
+            } catch (fallbackError) {
+                console.error('❌ Fallback also failed:', fallbackError.message);
+                throw new Error(`Failed to launch browser: ${chromiumError.message} | Fallback: ${fallbackError.message}`);
+            }
+        }
     } else {
         // Configuration pour développement local
-        return await puppeteer.launch({
+        console.log('💻 Using regular Puppeteer for local environment');
+        
+        const browser = await puppeteer.launch({
             headless: 'new',
             args: [
                 '--no-sandbox',
@@ -35,6 +75,9 @@ async function getBrowserInstance() {
                 '--disable-gpu'
             ]
         });
+        
+        console.log('✅ Successfully launched local Puppeteer');
+        return browser;
     }
 }
 
@@ -46,6 +89,8 @@ async function getBrowserInstance() {
 exports.generatePDF = async (options) => {
     let browser = null;
     try {
+        console.log('📄 Starting PDF generation...');
+        
         // Generate HTML
         const html = templateService.generateHTMLATT(options);
         
@@ -70,7 +115,7 @@ exports.generatePDF = async (options) => {
                 left: '20mm'
             },
             displayHeaderFooter: true,
-            headerTemplate: '<div></div>', // Empty header
+            headerTemplate: '<div></div>',
             footerTemplate: `
                 <div style="font-size: 6.5pt; color: #444; text-align: center; width: 100%; padding-top: 2mm; border-top: 0.5pt solid #999; margin: 0 20mm;">
                     ${options.footer_text || process.env.FOOTER_TEXT}
@@ -78,10 +123,11 @@ exports.generatePDF = async (options) => {
             `
         });
         
+        console.log('✅ PDF generated successfully');
         return pdfBuffer;
         
     } catch (error) {
-        console.error('PDF Generation Error:', error);
+        console.error('❌ PDF Generation Error:', error);
         throw new Error('Erreur lors de la génération du PDF: ' + error.message);
     } finally {
         if (browser) {
@@ -100,6 +146,8 @@ exports.generateMultiPagePDF = async (dataArray, baseOptions = {}) => {
     let browser = null;
     
     try {
+        console.log(`📄 Starting multi-page PDF generation (${dataArray.length} pages)...`);
+        
         // Launch browser with environment-specific config
         browser = await getBrowserInstance();
         
@@ -152,10 +200,11 @@ exports.generateMultiPagePDF = async (dataArray, baseOptions = {}) => {
             `
         });
         
+        console.log('✅ Multi-page PDF generated successfully');
         return pdfBuffer;
         
     } catch (error) {
-        console.error('Multi-page PDF Generation Error:', error);
+        console.error('❌ Multi-page PDF Generation Error:', error);
         throw new Error('Erreur lors de la génération du PDF multi-pages: ' + error.message);
     } finally {
         if (browser) {
@@ -174,6 +223,8 @@ exports.generateCustomPDF = async (options, pageSettings = {}) => {
     let browser = null;
     
     try {
+        console.log('📄 Starting custom PDF generation...');
+        
         const html = templateService.generateHTMLBCLG(options);
         
         // Launch browser with environment-specific config
@@ -198,9 +249,11 @@ exports.generateCustomPDF = async (options, pageSettings = {}) => {
             ...pageSettings
         });
         
+        console.log('✅ Custom PDF generated successfully');
         return pdfBuffer;
         
     } catch (error) {
+        console.error('❌ Custom PDF Generation Error:', error);
         throw new Error('Erreur lors de la génération du PDF personnalisé: ' + error.message);
     } finally {
         if (browser) {
