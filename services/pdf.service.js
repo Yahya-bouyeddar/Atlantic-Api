@@ -1,5 +1,42 @@
 const puppeteer = require('puppeteer');
+const puppeteerCore = require('puppeteer-core');
 const templateService = require('./template.service');
+
+/**
+ * Get browser configuration based on environment
+ */
+async function getBrowserInstance() {
+    const isProduction = process.env.NODE_ENV === 'production';
+    
+    if (isProduction) {
+        // Configuration pour Render (production)
+        const chromium = require('@sparticuz/chromium');
+        
+        return await puppeteerCore.launch({
+            args: [
+                ...chromium.args,
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-dev-shm-usage',
+                '--disable-gpu'
+            ],
+            defaultViewport: chromium.defaultViewport,
+            executablePath: await chromium.executablePath(),
+            headless: chromium.headless,
+        });
+    } else {
+        // Configuration pour développement local
+        return await puppeteer.launch({
+            headless: 'new',
+            args: [
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-dev-shm-usage',
+                '--disable-gpu'
+            ]
+        });
+    }
+}
 
 /**
  * Generate PDF from HTML using Puppeteer
@@ -11,16 +48,10 @@ exports.generatePDF = async (options) => {
     try {
         // Generate HTML
         const html = templateService.generateHTMLATT(options);
-        // Launch browser
-        browser = await puppeteer.launch({
-            headless: 'new',
-            args: [
-                '--no-sandbox',
-                '--disable-setuid-sandbox',
-                '--disable-dev-shm-usage',
-                '--disable-gpu'
-            ]
-        });
+        
+        // Launch browser with environment-specific config
+        browser = await getBrowserInstance();
+        
         const page = await browser.newPage();
         
         // Set content
@@ -69,16 +100,8 @@ exports.generateMultiPagePDF = async (dataArray, baseOptions = {}) => {
     let browser = null;
     
     try {
-        // Launch browser once
-        browser = await puppeteer.launch({
-            headless: 'new',
-            args: [
-                '--no-sandbox',
-                '--disable-setuid-sandbox',
-                '--disable-dev-shm-usage',
-                '--disable-gpu'
-            ]
-        });
+        // Launch browser with environment-specific config
+        browser = await getBrowserInstance();
         
         const page = await browser.newPage();
         
@@ -153,10 +176,8 @@ exports.generateCustomPDF = async (options, pageSettings = {}) => {
     try {
         const html = templateService.generateHTMLBCLG(options);
         
-        browser = await puppeteer.launch({
-            headless: 'new',
-            args: ['--no-sandbox', '--disable-setuid-sandbox']
-        });
+        // Launch browser with environment-specific config
+        browser = await getBrowserInstance();
         
         const page = await browser.newPage();
         await page.setContent(html, { waitUntil: 'networkidle0' });

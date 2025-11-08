@@ -9,7 +9,6 @@
     "dev": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "esbuild server.js --bundle --platform=node --outfile=dist/server.js --external:puppeteer --external:puppeteer-core --external:@sparticuz/chromium-min --external:typescript"
-
   },
   "keywords": [
     "pdf",
@@ -21,6 +20,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@sparticuz/chromium": "^141.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
@@ -29,6 +29,7 @@
     "multer": "^1.4.5-lts.1",
     "path": "^0.12.7",
     "puppeteer": "^21.5.2",
+    "puppeteer-core": "^24.29.1",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
