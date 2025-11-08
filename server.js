@@ -13,24 +13,16 @@ const PORT = process.env.PORT || 3000;
 // Security middleware
 app.use(helmet());
 
-// Rate limiting
-// const limiter = rateLimit({
-//     windowMs: 1 * 60 * 1000, // 1 minute
-//     max: parseInt(process.env.MAX_REQUESTS_PER_MINUTE) || 30,
-//     message: 'Trop de requêtes, veuillez réessayer plus tard.'
-// });
-
-// app.use('/api/', limiter);
-
 // CORS
-app.use(cors({
-    origin: process.env.NODE_ENV === 'production' 
-        ? ['https://yourdomain.com'] 
-        : '*',
-    methods: ['GET', 'POST'],
-    allowedHeaders: ['Content-Type']
-}));
+// app.use(cors({
+//     origin: process.env.NODE_ENV === 'production' 
+//         ? process.env.ALLOWED_PROD_URL
+//         : '*',
+//     methods: ['GET', 'POST'],
+//     allowedHeaders: ['Content-Type']
+// }));
 
+app.use(cors());
 // Body parser
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
