@@ -60,7 +60,7 @@ app.use('*', (req, res) => {
 app.use(errorHandler);
 
 // Start server
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);
     console.log(`📝 Environment: ${process.env.NODE_ENV}`);
     console.log(`📄 API docs: http://localhost:${PORT}/api/bon/docs`);
