@@ -28,7 +28,8 @@ async function getBrowserInstance() {
     console.log("💻 Using regular Puppeteer for local environment");
 
     const browser = await puppeteer.launch({
-      headless: "new",
+    //   headless: "new",
+    headless: false,
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
@@ -75,7 +76,7 @@ const generatePDF = async (options) => {
         bottom: "15mm",
         left: "20mm",
       },
-      displayHeaderFooter: true,
+      displayHeaderFooter: false,
     //   headerTemplate: "<div></div>",
     //   footerTemplate: `
     //             <div style="font-size: 6.5pt; color: #444; text-align: center; width: 100%; padding-top: 2mm; border-top: 0.5pt solid #999; margin: 0 20mm;">
@@ -99,7 +100,7 @@ const generatePDF = async (options) => {
     throw new Error("Erreur lors de la génération du PDF: " + error.message);
   } finally {
     if (browser) {
-      await browser.close();
+    //   await browser.close();
     }
   }
 };
@@ -190,7 +191,7 @@ const generateMultiPagePDF = async (dataArray, baseOptions = {}) => {
         bottom: "15mm",
         left: "20mm",
       },
-      displayHeaderFooter: true,
+      displayHeaderFooter: false,
     //   headerTemplate: "<div></div>",
     //   footerTemplate: `
     //             <div style="font-size: 6.5pt; color: #444; text-align: center; width: 100%; padding-top: 2mm; border-top: 0.5pt solid #999; margin: 0 20mm;">

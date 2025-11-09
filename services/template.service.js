@@ -75,6 +75,10 @@ exports.generateHTMLATT = (options = {}) => {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${title}</title>
     <style>
+       
+         @import url('https://fonts.cdnfonts.com/css/times-new-roman');
+
+                
         @page {
             size: A4;
             margin: 5px 10px 5px 10px;
@@ -515,6 +519,7 @@ exports.generateHTMLBCLG = (options = {}) => {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${title}</title>
     <style>
+        @import url('https://fonts.cdnfonts.com/css/times-new-roman');
         @page {
             size: A4;
             margin: 5px 10px 5px 10px;
