@@ -8,9 +8,12 @@ const templateService = require("./template.service");
  */
 async function getBrowserInstance() {
   const isProduction = process.env.NODE_ENV === "production";
+  const isRender = process.env.RENDER === "true"; // Render sets this env variable
+  const isLinux = process.platform === "linux";
   
-  if (isProduction) {
-    console.log("🚀 Using Chromium for production environment");
+  // Use chromium for production Linux environments (like Render)
+  if (isProduction && (isRender || isLinux)) {
+    console.log("🚀 Using @sparticuz/chromium for production environment");
     
     const browser = await puppeteerCore.launch({
       args: chromium.args,
@@ -112,8 +115,19 @@ const generateMultiPagePDF = async (dataArray, baseOptions = {}) => {
 
     const page = await browser.newPage();
 
-    // Generate HTML for all pages
-    let fullHTML = "";
+    // Generate HTML for first page to get structure
+    const firstPageOptions = {
+      ...baseOptions,
+      ...dataArray[0],
+    };
+    const firstPageHTML = templateService.generateHTMLBCLG(firstPageOptions);
+
+    // Extract head and body separately
+    const headMatch = firstPageHTML.match(/<head>([\s\S]*?)<\/head>/i);
+    const head = headMatch ? headMatch[1] : '';
+
+    // Generate body content for all pages
+    let combinedBody = '';
 
     for (let i = 0; i < dataArray.length; i++) {
       const pageData = dataArray[i];
@@ -127,20 +141,35 @@ const generateMultiPagePDF = async (dataArray, baseOptions = {}) => {
       // Generate HTML for this page
       const pageHTML = templateService.generateHTMLBCLG(pageOptions);
 
-      // Add page break after each page except the last
+      // Extract body content
+      const bodyMatch = pageHTML.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+      const bodyContent = bodyMatch ? bodyMatch[1] : '';
+
+      // Add body content with page break
       if (i < dataArray.length - 1) {
-        fullHTML += pageHTML.replace(
-          "</body>",
-          '<div style="page-break-after: always;"></div></body>'
-        );
+        combinedBody += bodyContent + '<div style="page-break-after: always;"></div>';
       } else {
-        fullHTML += pageHTML;
+        combinedBody += bodyContent;
       }
     }
+
+    // Combine everything into a single valid HTML document
+    const fullHTML = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          ${head}
+        </head>
+        <body>
+          ${combinedBody}
+        </body>
+      </html>
+    `;
 
     // Set content
     await page.setContent(fullHTML, {
       waitUntil: "networkidle0",
+      timeout: 30000,
     });
 
     // Generate PDF
@@ -157,7 +186,7 @@ const generateMultiPagePDF = async (dataArray, baseOptions = {}) => {
       headerTemplate: "<div></div>",
       footerTemplate: `
                 <div style="font-size: 6.5pt; color: #444; text-align: center; width: 100%; padding-top: 2mm; border-top: 0.5pt solid #999; margin: 0 20mm;">
-                    ${baseOptions.footer_text || process.env.FOOTER_TEXT}
+                    ${baseOptions.footer_text || process.env.FOOTER_TEXT || ''}
                 </div>
             `,
     });
