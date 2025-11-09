@@ -76,12 +76,12 @@ const generatePDF = async (options) => {
         left: "20mm",
       },
       displayHeaderFooter: true,
-      headerTemplate: "<div></div>",
-      footerTemplate: `
-                <div style="font-size: 6.5pt; color: #444; text-align: center; width: 100%; padding-top: 2mm; border-top: 0.5pt solid #999; margin: 0 20mm;">
-                    ${options.footer_text || process.env.FOOTER_TEXT}
-                </div>
-            `,
+    //   headerTemplate: "<div></div>",
+    //   footerTemplate: `
+    //             <div style="font-size: 6.5pt; color: #444; text-align: center; width: 100%; padding-top: 2mm; border-top: 0.5pt solid #999; margin: 0 20mm;">
+    //                 ${options.footer_text || process.env.FOOTER_TEXT}
+    //             </div>
+    //         `,
     });
 
     // Ensure we return a proper Buffer
@@ -191,12 +191,12 @@ const generateMultiPagePDF = async (dataArray, baseOptions = {}) => {
         left: "20mm",
       },
       displayHeaderFooter: true,
-      headerTemplate: "<div></div>",
-      footerTemplate: `
-                <div style="font-size: 6.5pt; color: #444; text-align: center; width: 100%; padding-top: 2mm; border-top: 0.5pt solid #999; margin: 0 20mm;">
-                    ${baseOptions.footer_text || process.env.FOOTER_TEXT || ''}
-                </div>
-            `,
+    //   headerTemplate: "<div></div>",
+    //   footerTemplate: `
+    //             <div style="font-size: 6.5pt; color: #444; text-align: center; width: 100%; padding-top: 2mm; border-top: 0.5pt solid #999; margin: 0 20mm;">
+    //                 ${baseOptions.footer_text || process.env.FOOTER_TEXT || ''}
+    //             </div>
+    //         `,
     });
 
     // Debug logging
