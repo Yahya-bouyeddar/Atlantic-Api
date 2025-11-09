@@ -6,64 +6,9 @@ const templateService = require('./template.service');
  * Get browser configuration based on environment
  */
 async function getBrowserInstance() {
-    const isProduction = process.env.NODE_ENV === 'production';
+   
     
-    console.log('🔍 Environment check:', {
-        NODE_ENV: process.env.NODE_ENV,
-        isProduction: isProduction
-    });
     
-    if (isProduction) {
-        // Configuration pour Render (production)
-        console.log('🚀 Attempting to use Chromium for Render environment');
-        
-        try {
-            const chromium = require('@sparticuz/chromium');
-            
-            const browser = await puppeteerCore.launch({
-                args: [
-                    ...chromium.args,
-                    '--no-sandbox',
-                    '--disable-setuid-sandbox',
-                    '--disable-dev-shm-usage',
-                    '--disable-gpu'
-                ],
-                defaultViewport: chromium.defaultViewport,
-                executablePath: await chromium.executablePath(),
-                headless: chromium.headless,
-            });
-            
-            console.log('✅ Successfully launched Chromium from @sparticuz/chromium');
-            return browser;
-            
-        } catch (chromiumError) {
-            // Fallback sur Chromium système installé via aptfile
-            console.error('⚠️ Error with @sparticuz/chromium:', chromiumError.message);
-            console.log('🔄 Trying fallback to system Chromium...');
-            
-            try {
-                const browser = await puppeteerCore.launch({
-                    executablePath: '/usr/bin/chromium-browser',
-                    args: [
-                        '--no-sandbox',
-                        '--disable-setuid-sandbox',
-                        '--disable-dev-shm-usage',
-                        '--disable-gpu',
-                        '--disable-extensions'
-                    ],
-                    headless: 'new'
-                });
-                
-                console.log('✅ Successfully launched system Chromium');
-                return browser;
-                
-            } catch (fallbackError) {
-                console.error('❌ Fallback also failed:', fallbackError.message);
-                throw new Error(`Failed to launch browser: ${chromiumError.message} | Fallback: ${fallbackError.message}`);
-            }
-        }
-    } else {
-        // Configuration pour développement local
         console.log('💻 Using regular Puppeteer for local environment');
         
         const browser = await puppeteer.launch({
@@ -78,7 +23,7 @@ async function getBrowserInstance() {
         
         console.log('✅ Successfully launched local Puppeteer');
         return browser;
-    }
+    
 }
 
 /**
