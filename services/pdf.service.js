@@ -20,6 +20,7 @@ async function getBrowserInstance() {
       defaultViewport: chromium.defaultViewport,
       executablePath: await chromium.executablePath(),
       headless: chromium.headless,
+
     });
     
     console.log("✅ Successfully launched Chromium for production");
@@ -35,6 +36,8 @@ async function getBrowserInstance() {
         "--disable-setuid-sandbox",
         "--disable-dev-shm-usage",
         "--disable-gpu",
+        '--font-render-hinting=none', // Désactive le hinting des polices
+        '--disable-font-subpixel-positioning', // Améliore le rendu
       ],
     });
 
@@ -225,7 +228,7 @@ const generateMultiPagePDF = async (dataArray, baseOptions = {}) => {
     );
   } finally {
     if (browser) {
-      await browser.close();
+    //   await browser.close();
     }
   }
 };
