@@ -84,6 +84,14 @@ const generatePDF = async (options) => {
             `,
     });
 
+    // Ensure we return a proper Buffer
+    if (!Buffer.isBuffer(pdfBuffer)) {
+      console.warn('⚠️ Converting to Buffer...');
+      const finalBuffer = Buffer.from(pdfBuffer);
+      console.log("✅ PDF generated successfully");
+      return finalBuffer;
+    }
+
     console.log("✅ PDF generated successfully");
     return pdfBuffer;
   } catch (error) {
@@ -190,6 +198,20 @@ const generateMultiPagePDF = async (dataArray, baseOptions = {}) => {
                 </div>
             `,
     });
+
+    // Debug logging
+    console.log('PDF Buffer Type:', typeof pdfBuffer);
+    console.log('PDF Buffer Length:', pdfBuffer?.length);
+    console.log('Is Buffer?', Buffer.isBuffer(pdfBuffer));
+    console.log('Constructor:', pdfBuffer?.constructor?.name);
+
+    // Ensure we return a proper Buffer
+    if (!Buffer.isBuffer(pdfBuffer)) {
+      console.warn('⚠️ Converting to Buffer...');
+      const finalBuffer = Buffer.from(pdfBuffer);
+      console.log("✅ Multi-page PDF generated successfully");
+      return finalBuffer;
+    }
 
     console.log("✅ Multi-page PDF generated successfully");
     return pdfBuffer;
