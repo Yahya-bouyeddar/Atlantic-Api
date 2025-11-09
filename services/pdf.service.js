@@ -76,6 +76,7 @@ const generatePDF = async (options) => {
         bottom: "15mm",
         left: "20mm",
       },
+      waitForFonts: true,
       displayHeaderFooter: false,
     //   headerTemplate: "<div></div>",
     //   footerTemplate: `
@@ -191,6 +192,7 @@ const generateMultiPagePDF = async (dataArray, baseOptions = {}) => {
         bottom: "15mm",
         left: "20mm",
       },
+      waitForFonts: true,
       displayHeaderFooter: false,
     //   headerTemplate: "<div></div>",
     //   footerTemplate: `
