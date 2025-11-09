@@ -81,6 +81,7 @@ exports.generateFromExcel = async (req, res, next) => {
             });
         }
         
+        console.log('📊 Processing Excel file...');
         
         // Parse Excel file
         const excelData = excelService.newParseExcelFile(req.file.buffer);
@@ -91,6 +92,8 @@ exports.generateFromExcel = async (req, res, next) => {
                 message: 'Please check your Excel file format'
             });
         }
+        
+        console.log(`✅ Found ${excelData.length} rows in Excel`);
         
         // Get base options from request body (sent as JSON string)
         let baseOptions = {};
@@ -108,7 +111,7 @@ exports.generateFromExcel = async (req, res, next) => {
         // Create page data for each Excel row
         const pagesData = excelData.map((row, index) => ({
             etage: row.etage,
-            reference: row.reference , // `MM/BC/${String(index + 1).padStart(4, '0')}/${year}`,
+            reference: row.reference,
             reference_2: reference_2,
             date: row.date,
             ville: baseOptions.ville || req.body.ville || 'Casa',
@@ -119,28 +122,34 @@ exports.generateFromExcel = async (req, res, next) => {
             logo_base64: baseOptions.logo_base64 || req.body.logo_base64
         }));
         
-
-        
+        console.log('🔨 Generating PDF...');
         
         // Generate multi-page PDF
         const pdfBuffer = await pdfService.generateMultiPagePDF(pagesData, baseOptions);
         
-        // Set headers
+        // CRITICAL: Verify buffer is valid
+        if (!Buffer.isBuffer(pdfBuffer)) {
+            console.error('❌ PDF generation did not return a Buffer!');
+            throw new Error('Invalid PDF buffer returned');
+        }
+        
+        console.log(`✅ PDF generated successfully (${pdfBuffer.length} bytes)`);
+        
+        // Set headers BEFORE sending
         const filename = `bon_coulage_multiple_${Date.now()}.pdf`;
         
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
         res.setHeader('Content-Length', pdfBuffer.length);
         
-        // Send PDF
-        res.send(pdfBuffer);
+        // Send PDF as binary buffer - NOT .json() or .send()
+        return res.end(pdfBuffer, 'binary');
         
     } catch (error) {
-        console.error('Excel PDF Generation Error:', error);
+        console.error('❌ Excel PDF Generation Error:', error);
         next(error);
     }
 };
-
 /**
  * Preview Excel data before generating PDF
  */
