@@ -73,12 +73,16 @@ exports.generateHTMLATT = (options = {}) => {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.cdnfonts.com/css/times-new-roman" rel="stylesheet">
     <title>${title}</title>
     <style>
        
-         @import url('https://fonts.cdnfonts.com/css/times-new-roman');
-
+        @font-face {
+            font-family: 'MomoSignature';
+            font-style: normal;
+            font-weight: 400;
+            src: url('http://localhost:5000/fonts/MomoSignature-Regular.ttf') format('truetype');
+            font-display: block;
+        }
                 
         @page {
             size: A4;
@@ -88,10 +92,10 @@ exports.generateHTMLATT = (options = {}) => {
             margin: 5px 10px 5px 10px;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Times New Roman', Times, serif !important;
+            font-family: 'MomoSignature', cursive !important;
         }
          body {
-            font-family: 'Times New Roman', Times, serif !important;
+            font-family: 'MomoSignature', cursive !important;
             font-size: 20.5pt;
             line-height: 1.2;
             margin:0;

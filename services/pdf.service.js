@@ -104,7 +104,7 @@ const generatePDF = async (options) => {
     throw new Error("Erreur lors de la génération du PDF: " + error.message);
   } finally {
     if (browser) {
-    //   await browser.close();
+      await browser.close();
     }
   }
 };
@@ -228,7 +228,7 @@ const generateMultiPagePDF = async (dataArray, baseOptions = {}) => {
     );
   } finally {
     if (browser) {
-    //   await browser.close();
+      await browser.close();
     }
   }
 };

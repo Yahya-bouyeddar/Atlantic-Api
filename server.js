@@ -37,6 +37,8 @@ app.get('/health', (req, res) => {
 });
 
 // Routes
+app.use('/fonts', express.static(path.join(__dirname, 'public/fonts')));
+
 app.use('/api/bon', bonRoutes);
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
