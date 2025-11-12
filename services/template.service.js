@@ -80,7 +80,7 @@ exports.generateHTMLATT = (options = {}) => {
             font-family: 'MomoSignature';
             font-style: normal;
             font-weight: 400;
-            src: url('http://localhost:5000/fonts/MomoSignature-Regular.ttf') format('truetype');
+            src: url('https://atlantic-api-1.onrender.com/fonts/MomoSignature-Regular.ttf') format('truetype');
             font-display: block;
         }
                 
