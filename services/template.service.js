@@ -9,7 +9,7 @@ const path = require("path");
 
 // Build the path to the logo
 const logoPath = path.join(__dirname, "../public", "logo.jpg");
-const fontPath = path.join(__dirname, "../public/fonts", "timesbd.ttf");
+const fontPath = path.join(__dirname, "../public/fonts", "times.ttf");
 
 // Function to read and encode font to base64
 function getFontBase64() {
