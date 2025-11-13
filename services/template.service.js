@@ -168,6 +168,8 @@ exports.generateHTMLATT = (options = {}) => {
             font-size: 25pt;
             font-weight: bold;
             display: inline-block;
+             font-family: 'MomoSignature', cursive !important;
+
         }
 
         .name-ar {
@@ -176,6 +178,8 @@ exports.generateHTMLATT = (options = {}) => {
             direction: rtl;
             display: inline-block;
             margin-left: 50mm;
+            font-family: 'MomoSignature', cursive !important;
+
         }
 
         .header-info {
