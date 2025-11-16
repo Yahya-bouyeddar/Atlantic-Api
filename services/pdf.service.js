@@ -15,8 +15,13 @@ async function getBrowserInstance() {
   if (isProduction && (isRender || isLinux)) {
     console.log("🚀 Using @sparticuz/chromium for production environment");
     
-    const browser = await puppeteerCore.launch({
-      args: chromium.args,
+    const browser = await puppeteerCore.launch({args: [
+      ...chromium.args,
+      '--disable-dev-shm-usage',     // ✅ NOUVEAU : Utilise /tmp au lieu de /dev/shm
+      '--no-sandbox',                // ✅ NOUVEAU : Requis sur Render
+      '--disable-setuid-sandbox',    // ✅ NOUVEAU : Requis sur Render
+      '--single-process',            // ✅ NOUVEAU : Moins de mémoire
+    ],
       defaultViewport: chromium.defaultViewport,
       executablePath: await chromium.executablePath(),
       headless: chromium.headless,
@@ -189,8 +194,8 @@ const generateMultiPagePDF = async (dataArray, baseOptions = {}) => {
    
     // Set content
     await page.setContent(fullHTML, {
-      waitUntil: "networkidle0",
-      timeout: 3000,
+      waitUntil: "domcontentloaded",
+      timeout: 60000,
     });
      console.log("apres setimeout");
      
