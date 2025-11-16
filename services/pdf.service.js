@@ -122,19 +122,24 @@ const generateMultiPagePDF = async (dataArray, baseOptions = {}) => {
     console.log(
       `📄 Starting multi-page PDF generation (${dataArray.length} pages)...`
     );
-
+   console.log("avant browser");
+   
     // Launch browser with environment-specific config
     browser = await getBrowserInstance();
-
+  console.log("apres browser");
+  console.log("avant page");
+  
     const page = await browser.newPage();
-
+    console.log("apres page");
+    
+  
     // Generate HTML for first page to get structure
     const firstPageOptions = {
       ...baseOptions,
       ...dataArray[0],
     };
     const firstPageHTML = templateService.generateHTMLBCLG(firstPageOptions);
-
+   
     // Extract head and body separately
     const headMatch = firstPageHTML.match(/<head>([\s\S]*?)<\/head>/i);
     const head = headMatch ? headMatch[1] : '';
@@ -150,10 +155,11 @@ const generateMultiPagePDF = async (dataArray, baseOptions = {}) => {
         ...baseOptions,
         ...pageData,
       };
-
+      
       // Generate HTML for this page
       const pageHTML = templateService.generateHTMLBCLG(pageOptions);
-
+      console.log("pageHtmlBCLG");
+      
       // Extract body content
       const bodyMatch = pageHTML.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
       const bodyContent = bodyMatch ? bodyMatch[1] : '';
@@ -165,7 +171,8 @@ const generateMultiPagePDF = async (dataArray, baseOptions = {}) => {
         combinedBody += bodyContent;
       }
     }
-
+      console.log("avant full html");
+      
     // Combine everything into a single valid HTML document
     const fullHTML = `
       <!DOCTYPE html>
@@ -178,13 +185,15 @@ const generateMultiPagePDF = async (dataArray, baseOptions = {}) => {
         </body>
       </html>
     `;
-
+   console.log("avant await");
+   
     // Set content
     await page.setContent(fullHTML, {
       waitUntil: "networkidle0",
-      timeout: 70000,
+      timeout: 3000,
     });
-
+     console.log("apres setimeout");
+     
     // Generate PDF
     const pdfBuffer = await page.pdf({
       format: "A4",
