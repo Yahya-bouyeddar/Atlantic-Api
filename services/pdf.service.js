@@ -195,7 +195,7 @@ const generateMultiPagePDF = async (dataArray, baseOptions = {}) => {
     // Set content
     await page.setContent(fullHTML, {
       waitUntil: "domcontentloaded",
-      timeout: 60000,
+      timeout: 3000,
     });
      console.log("apres setimeout");
      
