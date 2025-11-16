@@ -29,8 +29,8 @@ async function getBrowserInstance() {
     console.log("💻 Using regular Puppeteer for local environment");
 
     const browser = await puppeteer.launch({
-    //   headless: "new",
-    headless: false,
+      headless: "new",
+    // headless: false,
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
@@ -182,7 +182,7 @@ const generateMultiPagePDF = async (dataArray, baseOptions = {}) => {
     // Set content
     await page.setContent(fullHTML, {
       waitUntil: "networkidle0",
-      timeout: 30000,
+      timeout: 70000,
     });
 
     // Generate PDF
