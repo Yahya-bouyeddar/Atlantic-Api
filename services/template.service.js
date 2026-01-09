@@ -9,13 +9,18 @@ const path = require("path");
 
 // Build the path to the logo
 const logoPath = path.join(__dirname, "../public", "logo.jpg");
-const fontPath = path.join(__dirname, "../public/fonts", "times.ttf");
-
+const fontPathTimes = path.join(__dirname, "../public/fonts", "times.ttf");
+const fontPathTahoma = path.join(__dirname, "../public/fonts", "tahoma.ttf");
 // Function to read and encode font to base64
 function getFontBase64() {
   try {
-    const fontBuffer = fs.readFileSync(fontPath);
-    return fontBuffer.toString('base64');
+
+    const fontBuffer = fs.readFileSync(fontPathTimes);
+    const fontBufferTahoma = fs.readFileSync(fontPathTahoma);
+    return {
+      fontBuffer: fontBuffer.toString('base64'),
+      fontBufferTahoma: fontBufferTahoma.toString('base64'),
+    };
   } catch (err) {
     console.error("Error reading font:", err);
     return null;
@@ -85,11 +90,19 @@ exports.generateHTMLATT = (options = {}) => {
   // Build font-face CSS
   const fontFaceCSS = fontBase64 ? `
     @font-face {
-      font-family: 'timesbd';
+    //   font-family: 'timesbd';
+      font-family: 'MomoSignature';
       font-style: normal;
       font-weight: 400;
       src: url(data:font/truetype;charset=utf-8;base64,${fontBase64}) format('truetype');
       font-display: block;
+    }
+    @font-face {
+    font-family: 'Tahoma';
+    font-style: normal;
+    font-weight: 400;
+    src: url(data:font/truetype;charset=utf-8;base64,${fontBase64.fontBufferTahoma}) format('truetype');
+    font-display: block;
     }
   ` : '';
 
@@ -110,10 +123,12 @@ exports.generateHTMLATT = (options = {}) => {
             margin: 5px 10px 5px 10px;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'timesbd', 'Arial', sans-serif !important;
+            // font-family: 'timesbd', 'Arial', sans-serif !important;
+            font-family: 'MomoSignature','Times New Roman', Times, serif !important;
         }
          body {
-            font-family: 'timesbd', 'Arial', sans-serif !important;
+            // font-family: 'timesbd', 'Arial', sans-serif !important;
+            font-family: 'MomoSignature','Times New Roman', Times, serif !important;
             font-size: 20.5pt;
             line-height: 1.2;
             margin:0;
@@ -184,7 +199,8 @@ exports.generateHTMLATT = (options = {}) => {
             font-size: 25pt;
             font-weight: bold;
             display: inline-block;
-            font-family: 'timesbd', 'Arial', sans-serif !important;
+            // font-family: 'timesbd', 'Arial', sans-serif !important;
+            font-family: 'MomoSignature','Times New Roman', Times, serif !important;
         }
 
         .name-ar {
@@ -193,7 +209,8 @@ exports.generateHTMLATT = (options = {}) => {
             direction: rtl;
             display: inline-block;
             margin-left: 50mm;
-            font-family: 'timesbd', 'Arial', sans-serif !important;
+            // font-family: 'timesbd', 'Arial', sans-serif !important;
+            font-family: 'MomoSignature','Times New Roman', Times, serif !important;
         }
 
         .header-info {
@@ -294,6 +311,8 @@ exports.generateHTMLATT = (options = {}) => {
             font-size:20px;
             flex: 1;
             max-width:50vw;
+            font-family: 'Tahoma', 'Arial', sans-serif !important; /* CHANGEMENT ICI */
+
         }
 
         /* Authorization */
@@ -387,9 +406,13 @@ exports.generateHTMLATT = (options = {}) => {
             font-size:22px;
             width:60%;
             margin:30px auto;
+            font-family: 'Tahoma', 'Arial', sans-serif !important; /* CHANGEMENT ICI */
+
         }
         .note-parag-att p {
             padding-top:30px;
+            font-family: 'Tahoma', 'Arial', sans-serif !important; /* CHANGEMENT ICI */
+
         }
 
         @media print {
@@ -1414,6 +1437,8 @@ exports.generateHTMLBCLG = (options = {}) => {
   
     // Get font base64
     const fontBase64 = getFontBase64();
+    console.log("fontbase loaded");
+    
   
     let base64Image = null;
     try {
@@ -1433,6 +1458,13 @@ exports.generateHTMLBCLG = (options = {}) => {
         font-style: normal;
         font-weight: 400;
         src: url(data:font/truetype;charset=utf-8;base64,${fontBase64}) format('truetype');
+        font-display: block;
+      }
+      @font-face {
+        font-family: 'Tahoma';
+        font-style: normal;
+        font-weight: 400;
+        src: url(data:font/truetype;charset=utf-8;base64,${fontBase64.fontBufferTahoma}) format('truetype');
         font-display: block;
       }
     ` : '';
@@ -1640,6 +1672,7 @@ exports.generateHTMLBCLG = (options = {}) => {
               font-size:20px;
               max-width:50vw;
               flex: 1;
+              font-family: 'Tahoma', 'Arial', sans-serif !important; /* CHANGEMENT ICI */
           }
   
           /* Authorization */
@@ -1650,6 +1683,7 @@ exports.generateHTMLBCLG = (options = {}) => {
               margin: 12mm 0 8mm 0;
               position: relative;
               z-index: 1;
+              font-family: 'Tahoma', 'Arial', sans-serif !important; /* CHANGEMENT ICI */
           }
   
           /* Notes - CENTERED with blue box */
@@ -1677,6 +1711,7 @@ exports.generateHTMLBCLG = (options = {}) => {
               font-size: 17px;
               line-height: 1.4;
               margin: 10px;
+              font-family: 'Tahoma', 'Arial', sans-serif !important; /* CHANGEMENT ICI */
           }
   
           /* Stamp */
